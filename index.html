@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html>
+<body>
+         <h1 style=  " text-align: center;
+         font-style: bold;
+         font-family: Times new roman">GOOGLE MAPS</h1>
+      <div id="googleMap" style="width:90%;height:500px; margin: 50px;"></div>
+      <h2> Please upload the map coordinates file (MS-EXCEL) </h2>
+      <input type="file" id="fileUpload" onchange="Upload()"/>   
+	  <div>
+	  <br/>
+	<a href ="https://konklone.io/json/" target="_blank"> Click here to convert output to MS-EXCEL file </a>
+	</div>
+	
+      <script>
+         function initMap(excelRows) // initMap function
+		 {
+           var center = {lat:13.295714, lng:77.536391}; //Declaring the center as the SOURCE POINT 
+           var source='Doddaballapur';                                                                                                                                                                        
+         var map = new google.maps.Map(document.getElementById('googleMap'),  // 'zoom' and 'center' are mandatory parameters in the initMap function
+		 {
+             zoom: 7,
+             center: center 
+           });
+		   
+		   	   
+  var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/'; // Icon for Source Point
+  var marker2 = new google.maps.Marker({				//variable marker2 for P icon denoting the source
+    position: center ,
+    map: map,
+    icon: iconBase + 'parking_lot_maps.png', // Displays P Icon for source point
+    title : source + ' Source Point' // Displays title when cursor is on the map
+	
+  });
+	google.maps.event.addListener(marker2, 'click', (function (marker2, obj)  //Listener Event when you click on the marker
+	{
+               return function () 
+			   {
+               infowindow.setContent(source +' - Source point'); // InfoWindow Displays the information
+               infowindow.open(map, marker2);
+               }
+             })(marker2, obj));
+			 
+         var infowindow =  new google.maps.InfoWindow({}); // InfoWindow declaration
+         var marker, i; // declaring the variable marker
+         var mapInfo;
+         var arrayValues = [];	 // array declaration with list of elements - SOURCES (i)
+		var arrayValues2 = [];   // array declaration with list of elements - DESTINATIONS (j)
+		var Group = ['Group 1','Group 2','Group 3','Group 4']; //declaring the group in the 'Group' array
+         for(var i = 0; i < excelRows.length; i++) 
+        {
+        	 var obj = excelRows[i];                           // creating an object to access ms-excel elements
+        	 obj.Group = getGroupNum(obj,center);	           // Calling the function 'getGroupNum' and assigning it to obj.group
+         	arrayValues.push([obj.LOCATION_NAME , obj.LOC_LATITUDE , obj.LOC_LONGITUDE , obj.Group ]); // pushing the elements(MS-excel Headers) into the arrayValues array
+			arrayValues2.push([obj.LOCATION_NAME , obj.LOC_LATITUDE , obj.LOC_LONGITUDE , obj.Group ]); // pushing the elements MS-excel Headers)into the arrayValues2 array
+			
+			
+	if(obj.Group=='Group 1' && obj.LOC_LATITUDE!='13.295714' && obj.LOC_LONGITUDE!='77.536391') // For Group 1 points except source
+	{
+               marker = new google.maps.Marker({
+               position: new google.maps.LatLng(obj.LOC_LATITUDE,  obj.LOC_LONGITUDE),
+               map: map,
+				icon: new google.maps.MarkerImage("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"), // Yellow dot markers for Group 1 points
+               animation: google.maps.Animation.DROP,                // drops the marker on the map after uplaoding MS-Excel file
+               title: ' This is ' + obj.LOCATION_NAME      // Displays LOCATION_NAME when cursor is placed on the marker
+             });
+
+               google.maps.event.addListener(marker, 'click', (function (marker, obj) {
+               return function () {
+               infowindow.setContent(obj.LOCATION_NAME + ' belongs to ' + obj.Group );		//On clicking the marker , infowindow displays the LOCATION_NAME and which group the marker belongs to 
+               infowindow.open(map, marker);
+               }
+             })(marker, obj));			
+         }
+
+	if(obj.Group=='Group 2')    //For Group 2 points 
+	{
+               marker = new google.maps.Marker({
+               position: new google.maps.LatLng(obj.LOC_LATITUDE,  obj.LOC_LONGITUDE),
+               map: map,
+				icon: new google.maps.MarkerImage("http://maps.google.com/mapfiles/ms/icons/red-dot.png"),  //Red dot markers for Group 2 points
+               animation: google.maps.Animation.DROP,              // drops the marker on the map after uplaoding MS-Excel file
+               title: ' This is ' + obj.LOCATION_NAME    // Displays LOCATION_ID and LOCATION_NAME when cursor is placed on the marker
+             });
+
+               google.maps.event.addListener(marker, 'click', (function (marker, obj) {
+               return function () {
+               infowindow.setContent(obj.LOCATION_NAME + ' belongs to ' + obj.Group );		//On clicking the marker , infowindow displays the LOCATION_NAME and which group the marker belongs to 
+               infowindow.open(map, marker);
+               }
+             })(marker, obj));			
+         }
+
+	if(obj.Group=='Group 3')  // For Group 3 points
+	{
+               marker = new google.maps.Marker({
+               position: new google.maps.LatLng(obj.LOC_LATITUDE,  obj.LOC_LONGITUDE),
+               map: map,
+				icon: new google.maps.MarkerImage("http://maps.google.com/mapfiles/ms/icons/green-dot.png"),  //Green dot markers for Group 3 points
+               animation: google.maps.Animation.DROP,                                 // drops the marker on the map after uplaoding MS-Excel file
+               title: ' This is ' +obj.LOCATION_NAME                       // Displays LOCATION_ID and LOCATION_NAME when cursor is placed on the marker
+             });
+ 
+               google.maps.event.addListener(marker, 'click', (function (marker, obj) {
+               return function () {
+               infowindow.setContent(obj.LOCATION_NAME + ' belongs to ' + obj.Group );		//On clicking the marker , infowindow displays the LOCATION_NAME and which group the marker belongs to 
+               infowindow.open(map, marker);
+               }
+             })(marker, obj));			
+         }
+
+	if(obj.Group=='Group 4')   //For Group 4 points
+	{
+               marker = new google.maps.Marker({
+               position: new google.maps.LatLng(obj.LOC_LATITUDE,  obj.LOC_LONGITUDE),
+               map: map,
+				icon: new google.maps.MarkerImage("http://maps.google.com/mapfiles/ms/icons/blue-dot.png"),  //Blue dot markers for Group 4 points
+               animation: google.maps.Animation.DROP,                              // drops the marker on the map after uplaoding MS-Excel file
+               title: ' This is ' +obj.LOCATION_NAME                    // Displays LOCATION_ID and LOCATION_NAME when cursor is placed on the marker
+             });
+
+               google.maps.event.addListener(marker, 'click', (function (marker, obj) {
+               return function () {
+               infowindow.setContent(obj.LOCATION_NAME + ' belongs to ' + obj.Group );      //On clicking the marker , infowindow displays the LOCATION_NAME and which group the marker belongs to 
+               infowindow.open(map, marker);
+               }
+             })(marker, obj));			
+         }
+
+}
+ 
+ 
+
+var Valid_Combinations =[];				//Declaring the 'Valid_Combinations' array which has the Valid combinations in [i,j] format
+var Final_valid_combinations =[];   	//Declaring the "Final_valid_combinations' array which the Final valid combinations after removing the duplicates and repeated combinations
+
+// For Distance_Array ( Contains distance from one point of the group to other points of the group )
+
+for(var g=0; g<Group.length ;g++) // for loop for each group combinations
+{
+var Distance_Array = [];            	//Declaring Distance_Array which stores the distances
+var NearestPoints_Array = [];			//Declaring NearestPoints_Array which stores the distances from source point (hub) to other points in the group 
+var Only_Distances = [];				//Declaring Only_Distances which stores only the distances from point to point in each group  
+var Hub_Source_Distances_Only = [];		//Declaring 'Hub_Source_Distances_Only' which stores the distances only from the hub to the remaining points in the group
+
+console.log( Group[g] + " Valid_Combinations are : ");
+
+for(var i=0; i<arrayValues.length;i++)    //for loop for arrayValues array which stores the source locations
+{
+for(var j=0; j<arrayValues2.length;j++)   //for loop for arrayValue2 array which stores the destination locations
+{
+//console.log(arrayValues[i][0]);
+if(arrayValues[i][3]==Group[g] && arrayValues2[j][3]==Group[g] && arrayValues[i][0]!=arrayValues2[j][0])  // if condition so that arrayValues and arrayValues2 points are from Group 1 and source!=destination
+{
+var distance;                  // declaring the variable 'distance' to store the distance
+var lat1 = arrayValues[i][1];  // assigning the latitude of source to the variable 'lat1'
+var lng1 = arrayValues[i][2];   // assigning the longitude of source to the variable 'lng1'
+var lat2 = arrayValues2[j][1]; 	// assigning the latitude of destination to the variable 'lat2'
+var lng2 = arrayValues2[j][2];	// assigning the longitude of destination to the variable 'lng2'
+
+distance = (google.maps.geometry.spherical.computeDistanceBetween( new google.maps.LatLng(lat1,lng1) , new google.maps.LatLng(lat2,lng2))/1000).toFixed(2); 
+// calculating the distance between two points . The distance returned is in meters , so /1000 and convert into kms and rounding off the decimal points to 2 digits  
+
+Distance_Array.push([distance, arrayValues[i][0] , arrayValues2[j][0]]); // Pushing the distance,source,destination into the 'Distance_Array' array
+
+}
+}
+}
+
+for(var i=0;i<Distance_Array.length;i++)
+{ 
+Only_Distances.push(Distance_Array[i][0]); // Pushing online the distances between points in a group into the 'Only_Distances' array
+Only_Distances.sort(function (a,b) { return a-b }); // Sorting only the distances in ascending order 
+}
+//console.log("Distances between points in Group " + Only_Distances + " " );			// Displays the distances from point to point in each group in ascending order (after sorting)
+
+//For NearestPoints_Array (Contains distances from source point to other points in the group)
+
+for(var a=0; a<arrayValues2.length;a++)   //for loop for arrayValue2 array which stores the destination location
+{
+if(arrayValues2[a][3]==Group[g] && arrayValues2[a][0]!=source)
+{
+var lat1= 13.295714;  // Source Point(Hub) latitude
+var lng1= 77.536391;  // Source Point (Hub) longitude
+var lat2= arrayValues2[a][1]; // Latitude of the point assigned to the variable 'lat2'
+var lng2= arrayValues2[a][2]; // Longitude of the point assigned to the variable 'lng2'
+
+var shortest_distance = (google.maps.geometry.spherical.computeDistanceBetween( new google.maps.LatLng(lat1,lng1) , new google.maps.LatLng(lat2,lng2))/1000).toFixed(2);
+
+NearestPoints_Array.push([shortest_distance , source , arrayValues2[a][0]]);  // Pushing the elements 'shortest_distance' , Doddaballapur ( which is the common source point , destination into the NearestPoints_Array
+
+}}
+for(var i=0; i<NearestPoints_Array.length ; i++) 
+{
+Hub_Source_Distances_Only.push(NearestPoints_Array[i][0]); // Here NearestPoints_Array[i][0] = distances , which are being pushed into the Hub_Source_Distances_Only
+
+Hub_Source_Distances_Only.sort(function (a,b) {return a-b }); // Sorting the distances from Hub to points in the group in ascending order
+
+}
+
+//Hub to 1st Nearest Point
+
+var l1,l2;
+console.log("Hub to 1st NearestPoint 5 combinations :");
+for(var i=0; i<NearestPoints_Array.length;i++)
+{
+if(Hub_Source_Distances_Only[0] == NearestPoints_Array[i][0] ) 
+{
+console.log("Valid combinations are : " + NearestPoints_Array[i][1] + " - " + NearestPoints_Array[i][2]); // Displaying the valid combination (1) as : Hub to Nearest Point
+Valid_Combinations.push([NearestPoints_Array[i][1],NearestPoints_Array[i][2]]); 
+
+var point1= NearestPoints_Array[i][2]; // point1 contains the destination i.e the 1st nearest point from the hub
+var point2; // 1st combination destination is 2nd combination's source
+var point3; // 2nd combination destination is 3rd combination's source
+var point4; // 3rd combination destination is 4th combination's source
+var point5; // 4th combination destination is 5th combination's source
+
+var point_sorting = []; // contains only the distances from a specific source - for 1st combination
+var point_sorting2 = []; // contains only the distances from a specific source - for 2nd combination		
+var point_sorting3 = [];  // contains only the distances from a specific source - for 3rd combination
+var point_sorting4 = [];  // contains only the distances from a specific source - for 4th combination 
+var point_sorting5 = [];  // contains only the distances from a specific source - for 5th combination
+
+//point1 to point2
+for(var j=0; j<Distance_Array.length ; j++)
+{
+if(point1==Distance_Array[j][1])
+{
+point_sorting.push(Distance_Array[j][0]);
+}
+}
+const min=point_sorting.reduce((a,b) => Math.min(a,b))
+for( var i=0 ;i<Distance_Array.length;i++)
+{
+if(point1==Distance_Array[i][1] && min==Distance_Array[i][0])
+{
+point2=Distance_Array[i][2];
+console.log("Valid combinations are : " + point1 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point1,Distance_Array[i][2]]);
+
+}
+}
+
+//point2 to point3
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point2==Distance_Array[i][1] && Distance_Array[i][2]!=point1)
+{
+point_sorting2.push(Distance_Array[i][0]);
+}
+}
+const min2=point_sorting2.reduce((a,b) => Math.min(a,b))
+//console.log(min2);
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point2==Distance_Array[i][1] && min2==Distance_Array[i][0])
+{
+point3=Distance_Array[i][2]; //assigning previous point to new point and using it for new combination
+console.log("Valid combinations are : " + point2 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point2,Distance_Array[i][2]]);
+}
+}
+
+//point3 to point4
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point3==Distance_Array[i][1] && Distance_Array[i][2]!=point2 && Distance_Array[i][2]!=point1)
+{
+point_sorting3.push(Distance_Array[i][0]);
+}
+}
+const min3=point_sorting3.reduce((a,b) => Math.min(a,b))
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point3==Distance_Array[i][1] && min3==Distance_Array[i][0])
+{
+point4=Distance_Array[i][2];
+console.log("Valid combinations are : " + point3 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point3,Distance_Array[i][2]]);
+
+}
+}
+
+//point4 to point5
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point4==Distance_Array[i][1] && Distance_Array[i][2]!=point3 && Distance_Array[i][2]!=point2 && Distance_Array[i][2]!=point1)
+{
+point_sorting4.push(Distance_Array[i][0]);
+}
+}
+const min4=point_sorting4.reduce((a,b) => Math.min(a,b))
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point4==Distance_Array[i][1] && min4==Distance_Array[i][0])
+{
+point5=Distance_Array[i][2];
+console.log("Valid combinations are : " + point4 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point4,Distance_Array[i][2]]);
+
+}
+}
+
+}
+}
+
+
+ // Hub to 2nd Nearest Point valid combinations 
+console.log("Hub to 2nd Nearest Point 5 combinations :" );
+for(var i=0; i<NearestPoints_Array.length;i++)
+{
+if(Hub_Source_Distances_Only[1] == NearestPoints_Array[i][0] ) 
+{
+console.log("Valid combinations are : " + NearestPoints_Array[i][1] + " - " + NearestPoints_Array[i][2]); // Displaying the valid combination (1) as : Hub to Nearest Point
+Valid_Combinations.push([NearestPoints_Array[i][1],NearestPoints_Array[i][2]]);
+
+var point1= NearestPoints_Array[i][2]; // point1 contains the destination i.e the 1st nearest point from the hub
+var point2; // 1st combination destination is 2nd combination's source
+var point3; // 2nd combination destination is 3rd combination's source
+var point4; // 3rd combination destination is 4th combination's source
+var point5; // 4th combination destination is 5th combination's source
+
+var point_sorting = []; // contains only the distances from a specific source - for 1st combination
+var point_sorting2 = []; // contains only the distances from a specific source - for 2nd combination		
+var point_sorting3 = [];  // contains only the distances from a specific source - for 3rd combination
+var point_sorting4 = [];  // contains only the distances from a specific source - for 4th combination 
+var point_sorting5 = [];  // contains only the distances from a specific source - for 5th combination
+
+//point1 to point2
+for(var j=0; j<Distance_Array.length ; j++)
+{
+if(point1==Distance_Array[j][1])
+{
+point_sorting.push(Distance_Array[j][0]);
+}
+}
+const min=point_sorting.reduce((a,b) => Math.min(a,b))
+
+for( var i=0 ;i<Distance_Array.length;i++)
+{
+if(point1==Distance_Array[i][1] && min==Distance_Array[i][0])
+{
+point2=Distance_Array[i][2];
+console.log("Valid combinations are : " + point1 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point1,Distance_Array[i][2]]);
+
+}
+}
+
+
+//point2 to point3
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point2==Distance_Array[i][1] && Distance_Array[i][2]!=point1)
+{
+point_sorting2.push(Distance_Array[i][0]);
+}
+}
+const min2=point_sorting2.reduce((a,b) => Math.min(a,b))
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point2==Distance_Array[i][1] && min2==Distance_Array[i][0])
+{
+point3=Distance_Array[i][2];
+console.log("Valid combinations are : " + point2 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point2,Distance_Array[i][2]]);
+
+}
+}
+
+//point3 to point4
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point3==Distance_Array[i][1] && Distance_Array[i][2]!=point2 && Distance_Array[i][2]!=point1)
+{
+point_sorting3.push(Distance_Array[i][0]);
+}
+}
+const min3=point_sorting3.reduce((a,b) => Math.min(a,b))
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point3==Distance_Array[i][1] && min3==Distance_Array[i][0])
+{
+point4=Distance_Array[i][2];
+console.log("Valid combinations are : " + point3 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point3,Distance_Array[i][2]]);
+
+}
+}
+
+//point4 to point5
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point4==Distance_Array[i][1] && Distance_Array[i][2]!=point3 && Distance_Array[i][2]!=point2 && Distance_Array[i][2]!=point1)
+{
+point_sorting4.push(Distance_Array[i][0]);
+}
+}
+const min4=point_sorting4.reduce((a,b) => Math.min(a,b))
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point4==Distance_Array[i][1] && min4==Distance_Array[i][0])
+{
+point5=Distance_Array[i][2];
+console.log("Valid combinations are : " + point4 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point4,Distance_Array[i][2]]);
+
+}
+}
+
+}
+}
+
+// Hub to 3rd Nearest Point valid combinations 
+console.log("Hub to 3rd Nearest Point 5 combinations :" );
+for(var i=0; i<NearestPoints_Array.length;i++)
+{
+if(Hub_Source_Distances_Only[2] == NearestPoints_Array[i][0] ) 
+{
+console.log("Valid combinations are : " + NearestPoints_Array[i][1] + " - " + NearestPoints_Array[i][2]); // Displaying the valid combination (1) as : Hub to Nearest Point
+
+Valid_Combinations.push([NearestPoints_Array[i][1],NearestPoints_Array[i][2]]);
+
+var point1= NearestPoints_Array[i][2]; // point1 contains the destination i.e the 1st nearest point from the hub
+var point2; // 1st combination destination is 2nd combination's source
+var point3; // 2nd combination destination is 3rd combination's source
+var point4; // 3rd combination destination is 4th combination's source
+var point5; // 4th combination destination is 5th combination's source
+
+var point_sorting = []; // contains only the distances from a specific source - for 1st combination
+var point_sorting2 = []; // contains only the distances from a specific source - for 2nd combination		
+var point_sorting3 = [];  // contains only the distances from a specific source - for 3rd combination
+var point_sorting4 = [];  // contains only the distances from a specific source - for 4th combination 
+var point_sorting5 = [];  // contains only the distances from a specific source - for 5th combination
+
+//point1 to point2
+for(var j=0; j<Distance_Array.length ; j++)
+{
+if(point1==Distance_Array[j][1])
+{
+point_sorting.push(Distance_Array[j][0]);
+}
+}
+const min=point_sorting.reduce((a,b) => Math.min(a,b))
+for( var i=0 ;i<Distance_Array.length;i++)
+{
+if(point1==Distance_Array[i][1] && min==Distance_Array[i][0])
+{
+point2=Distance_Array[i][2];
+console.log("Valid combinations are : " + point1 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point1,Distance_Array[i][2]]);
+
+}
+}
+//console.log(point2);
+
+//point2 to point3
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point2==Distance_Array[i][1] && Distance_Array[i][2]!=point1)
+{
+point_sorting2.push(Distance_Array[i][0]);
+}
+}
+const min2=point_sorting2.reduce((a,b) => Math.min(a,b))
+
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point2==Distance_Array[i][1] && min2==Distance_Array[i][0])
+{
+point3=Distance_Array[i][2];
+console.log("Valid combinations are : " + point2 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point2,Distance_Array[i][2]]);
+
+}
+}
+
+//point3 to point4
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point3==Distance_Array[i][1] && Distance_Array[i][2]!=point2 && Distance_Array[i][2]!=point1)
+{
+point_sorting3.push(Distance_Array[i][0]);
+}
+}
+const min3=point_sorting3.reduce((a,b) => Math.min(a,b))
+
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point3==Distance_Array[i][1] && min3==Distance_Array[i][0])
+{
+point4=Distance_Array[i][2];
+console.log("Valid combinations are : " + point3 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point3,Distance_Array[i][2]]);
+
+}
+}
+
+//point4 to point5
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point4==Distance_Array[i][1] && Distance_Array[i][2]!=point3 && Distance_Array[i][2]!=point2 && Distance_Array[i][2]!=point1)
+{
+point_sorting4.push(Distance_Array[i][0]);
+}
+}
+const min4=point_sorting4.reduce((a,b) => Math.min(a,b))
+
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point4==Distance_Array[i][1] && min4==Distance_Array[i][0])
+{
+point5=Distance_Array[i][2];
+console.log("Valid combinations are : " + point4 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point4,Distance_Array[i][2]]);
+
+}
+}
+
+
+}
+}
+
+// Hub to 4th Nearest Point valid combinations 
+console.log("Hub to 4th Nearest Point 5 combinations :" );
+for(var i=0; i<NearestPoints_Array.length;i++)
+{
+if(Hub_Source_Distances_Only[3] == NearestPoints_Array[i][0] ) 
+{
+console.log("Valid combinations are : " + NearestPoints_Array[i][1] + " - " + NearestPoints_Array[i][2]); // Displaying the valid combination (1) as : Hub to Nearest Point
+
+Valid_Combinations.push([NearestPoints_Array[i][1],NearestPoints_Array[i][2]]);
+
+var point1= NearestPoints_Array[i][2]; // point1 contains the destination i.e the 1st nearest point from the hub
+var point2; // 1st combination destination is 2nd combination's source
+var point3; // 2nd combination destination is 3rd combination's source
+var point4; // 3rd combination destination is 4th combination's source
+var point5; // 4th combination destination is 5th combination's source
+
+var point_sorting = []; // contains only the distances from a specific source - for 1st combination
+var point_sorting2 = []; // contains only the distances from a specific source - for 2nd combination		
+var point_sorting3 = [];  // contains only the distances from a specific source - for 3rd combination
+var point_sorting4 = [];  // contains only the distances from a specific source - for 4th combination 
+var point_sorting5 = [];  // contains only the distances from a specific source - for 5th combination
+
+//point1 to point2
+for(var j=0; j<Distance_Array.length ; j++)
+{
+if(point1==Distance_Array[j][1])
+{
+point_sorting.push(Distance_Array[j][0]);
+}
+}
+const min=point_sorting.reduce((a,b) => Math.min(a,b))
+for( var i=0 ;i<Distance_Array.length;i++)
+{
+if(point1==Distance_Array[i][1] && min==Distance_Array[i][0])
+{
+point2=Distance_Array[i][2];
+console.log("Valid combinations are : " + point1 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point1,Distance_Array[i][2]]);
+}
+}
+
+
+//point2 to point3
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point2==Distance_Array[i][1] && Distance_Array[i][2]!=point1)
+{
+point_sorting2.push(Distance_Array[i][0]);
+}
+}
+const min2=point_sorting2.reduce((a,b) => Math.min(a,b))
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point2==Distance_Array[i][1] && min2==Distance_Array[i][0])
+{
+point3=Distance_Array[i][2];
+console.log("Valid combinations are : " + point2 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point2,Distance_Array[i][2]]);
+}
+}
+
+//point3 to point4
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point3==Distance_Array[i][1] && Distance_Array[i][2]!=point2 && Distance_Array[i][2]!=point1)
+{
+point_sorting3.push(Distance_Array[i][0]);
+}
+}
+const min3=point_sorting3.reduce((a,b) => Math.min(a,b))
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point3==Distance_Array[i][1] && min3==Distance_Array[i][0])
+{
+point4=Distance_Array[i][2];
+console.log("Valid combinations are : " + point3 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point3,Distance_Array[i][2]]);
+}
+}
+
+//point4 to point5
+for(var i=0;i<Distance_Array.length;i++)
+{
+if(point4==Distance_Array[i][1] && Distance_Array[i][2]!=point3 && Distance_Array[i][2]!=point2 && Distance_Array[i][2]!=point1)
+{
+point_sorting4.push(Distance_Array[i][0]);
+}
+}
+const min4=point_sorting4.reduce((a,b) => Math.min(a,b))
+for(var i=0 ;i<Distance_Array.length;i++)
+{
+if(point4==Distance_Array[i][1] && min4==Distance_Array[i][0])
+{
+point5=Distance_Array[i][2];
+console.log("Valid combinations are : " + point4 + " - " + Distance_Array[i][2]);
+Valid_Combinations.push([point4,Distance_Array[i][2]]);
+}
+}
+
+
+}
+}
+
+}			
+
+// Removing the repeated combinations (duplicates) from the valid combinations array :
+function multiDimensionalUnique(Valid_Combinations) 
+	{
+    var uniques = [];
+    var itemsFound = {};
+    for(var i = 0, l = Valid_Combinations.length; i < l; i++)
+	{
+        var stringified = JSON.stringify(Valid_Combinations[i]);
+        if(itemsFound[stringified]) { continue; }
+        uniques.push(Valid_Combinations[i]);
+        itemsFound[stringified] = true;
+    }
+    return uniques;
+	}
+
+Valid_Combinations=multiDimensionalUnique(Valid_Combinations);  // removing the duplicates from the 'Valid_Combinations' array and storing it back in the same array
+console.log(Valid_Combinations);
+
+
+//Removing j=i if i=j and j=1 both are present
+var repeated_combinations = []; // declaring an array to push the repeated sorce-destination and destination-source values 
+for(var i=0;i<Valid_Combinations.length;i++)
+{
+var temp_source1 = Valid_Combinations[i][0]; //storing the sources
+var temp_dest1 = Valid_Combinations[i][1];   // storing the destinations
+var a=0; var b=0; // flags to break the loop
+for(var z=0; z<Valid_Combinations.length; z++)
+{
+
+var temp_source2 = Valid_Combinations[z][0];
+var temp_dest2 = Valid_Combinations[z][1];
+
+if(temp_source1==temp_source2 && temp_dest1==temp_dest2)
+{
+}
+else 
+{
+if(temp_source1==temp_dest2 && temp_dest1==temp_source2)
+{
+b++;
+repeated_combinations.push([temp_source2,temp_dest2]); //pushing into 'repeated_combinations' array
+}
+else
+{
+a++;
+}
+}
+
+}
+if(b==0 && a!=0)
+{
+Final_valid_combinations.push([temp_source1,temp_dest1]);
+}
+else 
+{
+if(repeated_combinations.length!=0 )
+{
+var f1=0,f2=0; //  declaring flags to break the loop
+for(var x=0; x<repeated_combinations.length ; x++ )
+{
+if(temp_source1==repeated_combinations[x][0] && temp_dest1==repeated_combinations[x][1])
+{
+f1++;
+}
+else
+{
+f2++;
+}
+
+}
+if(f1==0)
+Final_valid_combinations.push([temp_source1,temp_dest1]); // pushing the remaining combinations without repetition into 'Final_valid_combinations' array
+}
+}
+
+}
+console.log(Final_valid_combinations); // displaying the final combinations
+ 
+//drawing polylines between the final source-destination combinations 
+for(var b=0; b<Final_valid_combinations.length;b++)
+{
+for(var a=0; a<arrayValues.length; a++)
+{
+var source_lat; //declaring 'source_lat' to store the latitude of the source
+var source_lng;  //declaring 'source_lng' to store the longitude of the source
+var dest_lat; //declaring 'dest_lat' to store the latitude of the destination
+var dest_lng; //dclaring the 'dest_lng' to store the longitude of the destination
+
+if(Final_valid_combinations[b][0]==arrayValues[a][0])
+{
+source_lat=parseFloat(arrayValues[a][1]);
+source_lng=parseFloat(arrayValues[a][2]);
+}
+if(Final_valid_combinations[b][1]==arrayValues[a][0])
+{
+dest_lat=parseFloat(arrayValues[a][1]);
+dest_lng=parseFloat(arrayValues[a][2]);
+}
+
+// Define a symbol using a predefined path (an arrow)
+        // supplied by the Google Maps JavaScript API.
+        var lineSymbol = {
+          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+		  scale:4,
+		  strokeColor: 'red'
+        };
+
+        // Create the polyline and add the symbol via the 'icons' property.
+        var line = new google.maps.Polyline({
+          path: [{lat:source_lat , lng: source_lng}, {lat: dest_lat , lng: dest_lng}],
+          icons: [{
+            icon: lineSymbol,
+            offset: '100%'
+          }],
+          map: map
+        });
+		animateArrow(line);  //calling the function 'animateArrow'
+		
+}
+}
+}
+
+	 function getGroupNum(obj,center ) // getGroupNum function - Decides which Group Number the point given from ms-excel file belongs to
+	{	 
+	var groupNum;                          			// variable 'groupNum' stores the Group number
+	var lat = parseFloat(obj.LOC_LATITUDE);         // assigning the latitude value(LOC_LATITUDE) of the point 
+	var log = parseFloat(obj.LOC_LONGITUDE);
+	var Fixedlat = parseFloat(center.lat) ;         // assigning the latitude of the source point to the variable 'Fixedlat'
+	var Fixedlng = parseFloat(center.lng);			// assigning the latitude of the source point to the variable 'Fixedng'
+	if(lat <= Fixedlat && log >= Fixedlng)         
+	{groupNum = 'Group 1'}							// belongs to group 1 (South East)
+	else if (lat >= Fixedlat && log >= Fixedlng) 
+	{groupNum = 'Group 2'}							// belongs to group 2 (North East)
+	else if (lat >= Fixedlat && log <= Fixedlng) 
+	{groupNum = 'Group 3'}							// belongs to group 3 (North West)
+	else if (lat <= Fixedlat && log <= Fixedlng) 
+	{groupNum = 'Group 4'}							// belongs to group 4 (South West)
+	else 
+	{groupNum = 'Missing group'}
+	return groupNum;
+	}
+	
+  //Change the API Key
+	function animateArrow(line)  //function 'animateArrow' - for animation of the arrow on the polyline
+	{
+	var count = 0;
+	window.setInterval(function() {
+	count = (count + 1) % 200;
+
+            var icons = line.get('icons');
+            icons[0].offset = (count / 2) + '%';
+            line.set('icons', icons);
+        }, 20);
+      }
+	  
+      </script>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsdREpzQ141cEaVhgmuv6lU5GpfDz6lL8&libraries=geometry&callback=initMap"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/xlsx.full.min.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/jszip.js"></script>
+      <script type="text/javascript">
+        
+	function Upload() // Function to check that the File uploaded is MS-EXCEL file 
+	{
+         	//Reference the FileUpload element.
+            	 var fileUpload = document.getElementById("fileUpload");
+         
+            	//Validate whether File is valid Excel file.
+            	 var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xls|.xlsx)$/;
+            	 if (regex.test(fileUpload.value.toLowerCase())) {
+                 if (typeof (FileReader) != "undefined") {
+                 var reader = new FileReader();
+         
+                 //For Browsers other than InternetExplorer
+                 if (reader.readAsBinaryString) {
+                 reader.onload = function (e) {
+                 ProcessExcel(e.target.result);
+                 };
+                 reader.readAsBinaryString(fileUpload.files[0]);
+                 }
+	 else 
+	{
+                         //For InternetExplorer Browser.
+                         reader.onload = function (e) {
+                             var data = "";
+                             var bytes = new Uint8Array(e.target.result);
+                             for (var i = 0; i < bytes.byteLength; i++) 
+							 {
+                             data += String.fromCharCode(bytes[i]);
+                             }
+                             ProcessExcel(data);
+                         };
+                         reader.readAsArrayBuffer(fileUpload.files[0]);
+                     }
+                 } 
+	else
+	{
+                     alert("This browser does not support HTML5.");
+                 }
+             }
+	 else {
+                 alert("Please upload a valid MS-Excel file");
+             }
+         };
+         function ProcessExcel(data) 
+	{
+             //Read the Excel File data.
+             var workbook = XLSX.read(data, {
+                 type: 'binary'
+             });
+         
+                
+	var firstSheet = workbook.SheetNames[0]; //Fetch the name of First Sheet from MS-EXCEL
+	//Read all rows from First Sheet into an JSON array.
+	var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+	var myJSON = JSON.stringify(excelRows);
+	var location = [];
+	initMap(excelRows);	 
+		};
+	
+      </script>
+   </body>
+</html>
+
+
+
+ 
